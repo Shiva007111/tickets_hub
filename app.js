@@ -1,4 +1,3 @@
-require('./config/database') // Connection to psql
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -13,6 +12,7 @@ const rateLimiter = require('./middlewares/rateLimiter');
 const authenticateToken = require('./middlewares/authMiddleware');
 */
 dotenv.config();
+require('./config/database') // Connection to psql
 
 
 // do 

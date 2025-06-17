@@ -9,7 +9,7 @@ const client = new Client({
 	 *           database: "ott_services_db",
 	 *           */
 
-	connectionString: "postgresql://postgres:postgres@localhost:5432/postgres",
+	connectionString: process.env.DATABASE_URL,
 	  ssl: {
 		      rejectUnauthorized: false, // Optional: Useful if you're using SSL without a verified certificate
 		    },
