@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const helmet = require('helmet');
+const routes = require('./routes/routes')
 /*
 const logger = require('./utils/logger');
 const { requestLogging, errorLogging } = require('./middlewares/loggingMiddleware');
@@ -12,6 +13,7 @@ const rateLimiter = require('./middlewares/rateLimiter');
 const authenticateToken = require('./middlewares/authMiddleware');
 */
 dotenv.config();
+console.log("DB URL from env:", process.env.DATABASE_URL);
 require('./config/database') // Connection to psql
 
 
@@ -33,7 +35,7 @@ app.use(express.json());
 //app.use(requestLogging);
 
 // Routes
-//app.use('/api/auth', /* rateLimiter.authLimiter, */ authRoutes);
+app.use('/api/', /* rateLimiter.authLimiter, */ routes);
 
 //app.use('/api/services', /* rateLimiter.apiLimiter, */ authenticateToken, serviceRoutes);
 
@@ -57,8 +59,8 @@ app.listen(3000, () => {
 
 
 app.get("/", (req, res) => {
-	    res.status(200).json({success: true, message: "Hello World"})
-	    })
+      res.status(200).json({success: true, message: "Hello World"})
+      })
 /*
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {

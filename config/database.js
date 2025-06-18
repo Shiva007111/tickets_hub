@@ -1,4 +1,6 @@
+require('dotenv').config();
 const { Client } = require("pg");
+console.log("DB URL from env from database js:", process.env.DATABASE_URL);
  
 const client = new Client({
 	/*
@@ -8,14 +10,16 @@ const client = new Client({
 	 *         password: "be562d3796379b9801db508947d67388",
 	 *           database: "ott_services_db",
 	 *           */
-
 	connectionString: process.env.DATABASE_URL,
-	  ssl: {
+	 /* ssl: {
 		      rejectUnauthorized: false, // Optional: Useful if you're using SSL without a verified certificate
-		    },
+		    },*/
 });
 client
   .connect()
   .then(() => console.log("Connected to local PostgreSQL"))
   .catch((err) => console.error("Connection error", err.stack));
+
+
+module.exports = client
 
