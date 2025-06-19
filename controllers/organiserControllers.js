@@ -47,7 +47,55 @@ const getAllOrgs = async (req, res) => {
   }
 }
 
+const ItemDetails = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("Received Params ID", id);
+    const { status, data } = await organiser.getItem(id);
+    if (status) {
+      return res.status(200).json({ data: data });
+    }
+    else {
+      return res.status(422).json({ data: data });
+    }
+  }
+  catch (err) {
+    console.log("crashing in getItem--->", err.message);
+    return res.status(422).json({ msg: err.message });
+  }
+};
+
+const UpdateItem = async (req, res) => {
+  try{
+    const id = req.params.id;
+    const { status, data } = await organiser.getItem(id);
+    console.log("here--->",status)
+    if (!status) {
+      return res.status(422).json({ data: data });
+    }
+    const {name, mobile_number,verification_status} = req.body;
+    const {new_status, new_data} = await organiser.update({name, mobile_number, verification_status, id});
+    if (new_status){
+      res.status(200).json({data: new_data});
+    }
+    else {
+      res.status(422).json({data: new_data})
+    }
+  }
+  catch (err) {
+    console.log("crashing in update item --->", err.message);
+    return res.status(422).json({ msg: err.message });
+  }
+}
+
+
+
+
+
+
 module.exports = {
   create,
-  getAllOrgs
+  getAllOrgs,
+  ItemDetails,
+  UpdateItem
 }

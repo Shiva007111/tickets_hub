@@ -42,11 +42,29 @@ async function createOrganiser({
   }
 }
 
+
+async function update({name, mobile_number, verification_status, id}) {
+  try {
+    console.log({name, mobile_number, verification_status, id})
+
+    const query = `
+      UPDATE organisers 
+      SET organiser_name = $1, mobile_number = $2, verification_status = $3 
+      WHERE organiser_id = $4
+    `;
+    const result  = await client.query(query, [name, mobile_number, verification_status, id])
+    return {new_status: true, new_data: "Records Updated Successfully"}
+  }
+  catch (err) {
+    console.log("crashing in update", err.msg)
+    return {new_status: false, new_data: err.message}    
+  }
+}
+
 async function getAll({ offset, limit }) {
   const query = `SELECT * FROM organisers ORDER BY created_at DESC OFFSET $1 LIMIT $2`;
 
   const result = await client.query(query, [offset, limit]);
-  console.log("result--->", result);
   if (result.rows.length === 0) {
     return { status: false, data: "No Data Found" };
   }
@@ -59,6 +77,18 @@ async function getAll({ offset, limit }) {
     data: result.rows,
   };
   return { status: true, data: obj };
+}
+
+async function getItem(id) {
+  const  query = `SELECT * FROM organisers WHERE organiser_id = $1`;
+  const result = await client.query(query, [id])
+  if (result.rows.length === 0) {
+    return {status: false, data: "No data Found"}
+  }
+  else {
+    return {status: true, data:result.rows[0]}
+  }
+
 }
 
 async function getTotalCount() {
@@ -95,4 +125,6 @@ module.exports = {
   getUserByEmail,
   getUserByName,
   getAll,
+  getItem,
+  update
 };
