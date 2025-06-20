@@ -16,16 +16,19 @@ CREATE TABLE organisers (
 CREATE TABLE locations (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) UNIQUE NOT NULL
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE languages (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) UNIQUE NOT NULL
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE genres (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) UNIQUE NOT NULL
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Events (depends on organisers, locations, languages)
@@ -45,6 +48,7 @@ CREATE TABLE events (
   max_per_user INTEGER DEFAULT 1,
   location_id INTEGER REFERENCES locations(id),
   language_id INTEGER REFERENCES languages(id)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Join table
@@ -67,5 +71,6 @@ CREATE TABLE ticket_pricing (
   total_capacity INTEGER NOT NULL,
   available_quantity INTEGER DEFAULT 0,
   booked_quantity INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   UNIQUE(event_id, label)
 );
