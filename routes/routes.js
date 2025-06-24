@@ -1,6 +1,7 @@
 const express = require('express')
 const orgController = require('../controllers/organiserControllers');
 const platfromController = require('../controllers/platfromController');
+const eventController = require('../controllers/eventController')
 const router = express.Router();
 
 //organisers routes 
@@ -10,7 +11,7 @@ router.get('/organiser/:id/getItem', orgController.ItemDetails);
 router.put('/organiser/:id/update', orgController.UpdateItem);
 
 //event Routes
-// router.put('/event/:id/create', eventController.create);
+ router.post('/events/:orgId/create', eventController.create);
 
 //paltform settings
 router.post('/platforms/genres/create', platfromController.genreCreate);

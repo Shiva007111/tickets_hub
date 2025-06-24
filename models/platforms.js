@@ -35,8 +35,22 @@ async function deleteById(table, id) {
   return result;
 }
 
+async function getItem(table, id) {
+  validateTable(table)
+  const query  = `SELECT * FROM ${table} WHERE id = $1 `
+  const exists = await client.query(query, [id])
+  if (exists.rows.length === 0 ){
+    return [false , "Item not found"]
+  }
+  else {
+    return [true, exists.rows[0]]
+  }
+
+}
+
 module.exports = {
   createIfNotExists,
   getAll,
-  deleteById
+  deleteById,
+  getItem
 };
