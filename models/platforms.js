@@ -23,9 +23,10 @@ async function createIfNotExists(table, name) {
   return { status: true, data: result.rows[0] };
 }
 
-async function getAll(table) {
+async function getAll(table, offset, limit) {
   validateTable(table);
-  const result = await client.query(`SELECT * FROM ${table} ORDER BY created_at DESC`);
+  query = `SELECT * FROM ${table} ORDER BY created_at DESC OFFSET $1 LIMIT $2`
+  const result = await client.query(query, [offset, limit]);
   return result.rows;
 }
 

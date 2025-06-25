@@ -1,4 +1,5 @@
 const platformModel = require('../models/platforms');
+const common_code = require('../helpers/common_code')
 
 function createHandler(table) {
   return async (req, res) => {
@@ -19,7 +20,9 @@ function createHandler(table) {
 function getAllHandler(table) {
   return async (req, res) => {
     try {
-      const data = await platformModel.getAll(table);
+      const {page_no, page_size} = req.query
+      const offset = await common_code.pagination(page_no, page_size)
+      const data = await platformModel.getAll(table, offset, page_size);
       return res.status(200).json({ data });
     } 
     catch (err) {
