@@ -1,6 +1,7 @@
 const organiser = require('../models/organisers')
 const platformModel = require('../models/platforms')
 const events = require('../models/events') 
+const common_code = require('../helpers/common_code')
 
 
 
@@ -77,6 +78,28 @@ const create = async (req, res) => {
 
 }
 
+const getAllEvents = async (req, res) => {
+  try{
+    const {page_no, page_size} = req.query
+    const orgId = req.params.orgId
+    const {status, data} = await organiser.getItem(orgId)
+    const org_id = data.id
+    const offset = await common_code.pagination(page_no, page_size)
+    const [evt_status, evt_data]= await events.getEvents(org_id, offset, page_size)
+    if (evt_status) {
+      return res.status(200).json({data: evt_data})
+    }
+    else {
+      return res.status(422).json({data:evt_data})
+    }
+  }
+  catch(err) {
+    console.log("err ->", err.message )
+    return res.status(422).json({data:err.message})
+  }
+
+}
 module.exports = {
-  create
+  create,
+  getAllEvents
 }

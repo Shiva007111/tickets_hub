@@ -80,13 +80,20 @@ async function getAll({ offset, limit }) {
 }
 
 async function getItem(id) {
-  const  query = `SELECT * FROM organisers WHERE organiser_id = $1`;
-  const result = await client.query(query, [id])
-  if (result.rows.length === 0) {
-    return {status: false, data: "No data Found"}
+  try {
+    const  query = `SELECT * FROM organisers WHERE organiser_id = $1`;
+    const result = await client.query(query, [id])
+    if (result.rows.length === 0) {
+      return {status: false, data: "No data Found"}
+    }
+    else {
+      console.log("get org item3", result.rows[0])
+      return {status: true, data: result.rows[0]}
+    }
   }
-  else {
-    return {status: true, data:result.rows[0]}
+  catch (err) {
+    console.log("error in getItem", err.message)
+    return {status: false, data: err.message}
   }
 
 }

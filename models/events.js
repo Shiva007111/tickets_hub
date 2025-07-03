@@ -58,6 +58,36 @@ async function createEvent ({title,
   }
 }
 
+async function getEvents(orgId,offset, limit) {
+  try{
+    const query = `SELECT * FROM events WHERE organiser_id = $1 ORDER BY created_at DESC OFFSET $2 LIMIT $3`
+    const result = await client.query(query, [orgId, offset, limit])
+    if(result.rows.length === 0){
+      return [false, "Data Not Found"]
+    }
+    else {
+      return [true, result.rows]
+    }
+  }
+  catch(err){
+    console.log("error -> ", err.message)
+    return [false, err.message]
+  }
+}
+
+
+async function getItem(eventId) {
+  const query = `SELECT * FROM event WHERE event_id = $1`
+  const result = await client.query(query, [eventId])
+  if(result.rows.length === 0){
+    return [false, "Data Not Found"]
+  }
+  else {
+    return [true, result.rows[0]]
+  }
+}
+
 module.exports = {
-  createEvent
+  createEvent,
+  getEvents
 }

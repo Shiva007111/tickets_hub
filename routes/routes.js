@@ -2,6 +2,7 @@ const express = require('express')
 const orgController = require('../controllers/organiserControllers');
 const platfromController = require('../controllers/platfromController');
 const eventController = require('../controllers/eventController')
+const pricingController = require('../controllers/pricingController')
 const router = express.Router();
 
 //organisers routes 
@@ -12,6 +13,11 @@ router.put('/organiser/:id/update', orgController.UpdateItem);
 
 //event Routes
  router.post('/events/:orgId/create', eventController.create);
+ router.get('/events/:orgId/getall', eventController.getAllEvents);
+
+// Pricing Routes
+ router.post('/orgniser/:OrdId/events/:evenId/createpricing',pricingController.createTier)
+
 
 //paltform settings
 router.post('/platforms/genres/create', platfromController.genreCreate);

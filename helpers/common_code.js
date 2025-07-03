@@ -32,6 +32,8 @@ async function pagination(page_no, page_size){
   return (no -1)*page_size
 }
 
+
+
 module.exports = {
   getUniqid,
   pagination
