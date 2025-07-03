@@ -83,6 +83,7 @@ async function getItem(id) {
   try {
     const  query = `SELECT * FROM organisers WHERE organiser_id = $1`;
     const result = await client.query(query, [id])
+    console.log("org_result", result.rows)
     if (result.rows.length === 0) {
       return {status: false, data: "No data Found"}
     }

@@ -13,6 +13,9 @@ async function getUniqid (entity) {
     table = "events"
     column_id = "event_id"
     break;
+  case "plans":
+    table = "ticket_pricing"
+    column_id = "tier_id"
   }
   while (true) {
     const id = uuidv4();

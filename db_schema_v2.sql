@@ -61,6 +61,7 @@ CREATE TABLE event_genres (
 -- Ticket pricing (depends on events)
 CREATE TABLE ticket_pricing (
   id SERIAL PRIMARY KEY,
+  tier_id VARCHAR(255) UNIQUE NOT NULL,
   event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
   label VARCHAR(100) NOT NULL,
   tier VARCHAR(100),

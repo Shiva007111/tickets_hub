@@ -16,7 +16,7 @@ router.put('/organiser/:id/update', orgController.UpdateItem);
  router.get('/events/:orgId/getall', eventController.getAllEvents);
 
 // Pricing Routes
- router.post('/orgniser/:OrdId/events/:evenId/createpricing',pricingController.createTier)
+ router.post('/orgniser/:orgId/events/:eventId/createpricing',pricingController.createTier)
 
 
 //paltform settings

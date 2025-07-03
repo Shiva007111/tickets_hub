@@ -77,17 +77,26 @@ async function getEvents(orgId,offset, limit) {
 
 
 async function getItem(eventId) {
-  const query = `SELECT * FROM event WHERE event_id = $1`
-  const result = await client.query(query, [eventId])
-  if(result.rows.length === 0){
-    return [false, "Data Not Found"]
+  try{
+    console.log("EVENT ID", eventId)
+    const query = `SELECT * FROM events WHERE event_id = $1`
+    const result = await client.query(query, [eventId])
+    // console.log("event_item", result)
+    if(result.rows.length === 0){
+      return [false, "Data Not Found"]
+    }
+    else {
+      return [true, result.rows[0]]
+    }
   }
-  else {
-    return [true, result.rows[0]]
+  catch(err) {
+    console.log("error while event get item", err.message)
+    return[false, error.message]
   }
 }
 
 module.exports = {
   createEvent,
-  getEvents
+  getEvents,
+  getItem
 }
