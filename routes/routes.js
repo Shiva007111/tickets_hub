@@ -16,7 +16,12 @@ router.put('/organiser/:id/update', orgController.UpdateItem);
  router.get('/events/:orgId/getall', eventController.getAllEvents);
 
 // Pricing Routes
- router.post('/orgniser/:orgId/events/:eventId/createpricing',pricingController.createTier)
+ router.post('/orgniser/:orgId/events/:eventId/createpricing',pricingController.createTier);
+ router.put('/ticketplan/:tier_id/update', pricingController.updateTier);
+ router.get('/ticketplan/:tier_id/details', pricingController.getTierById);
+ router.delete('/ticketplan/:tier_id/delete', pricingController.deleteTier);
+ router.get('/events/:event_id/get_tiers', pricingController.getAllTiersByEvent)
+
 
 
 //paltform settings
