@@ -99,7 +99,90 @@ const getAllEvents = async (req, res) => {
   }
 
 }
+
+const updateEvent = async (req, res) => {
+  try {
+    const event_uid = req.params.eventId;
+
+     const [evt_status, event_data] = await events.getItem(event_uid);
+    if (!evt_status) {
+      return res.status(404).json({ data: "Event not found" });
+    }
+
+    const eventDb_id = event_data.id;
+
+    const allowedKeys = [
+      "title", "description", "start_time", "end_time", "duration",
+      "event_status", "is_free", "venue_type", "location_id",
+      "language_id", "thumbnails", "genres"
+    ];
+
+    const updateData = {};
+    for (const key of allowedKeys) {
+      if (req.body[key] !== undefined) {
+        updateData[key] = req.body[key];
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ data: "No valid fields to update" });
+    }
+
+    const [status, updatedEvent] = await events.updateEvent(eventDb_id, updateData);
+
+    if (status) {
+      return res.status(200).json({ data: updatedEvent });
+    } else {
+      return res.status(404).json({ data: "Event not found or failed to update" });
+    }
+  } catch (err) {
+    console.log("Error while updating event:", err.message);
+    return res.status(500).json({ data: "Server error" });
+  }
+};
+
+
+const getEventDetails = async (req, res) => {
+  try {
+    const event_uid = req.params.event_id;
+
+    const [status, event] = await events.getItem(event_uid);
+    if (!status) {
+      return res.status(404).json({ data: "Event not found" });
+    }
+
+    const response = { ...event };
+
+    // Get genres for this event
+    const genreMapResult = await events.getGenreMappings(event.id);
+    const genreIds = genreMapResult.map(g => g.genre_id);
+    const genres = await platformModel.getNamesByIds("genres", genreIds);
+    response.genres = genres.map(g => g.name);
+
+    // Get location name
+    const [loc_status, loc] = await platformModel.getItem("locations", event.location_id);
+    response.location = loc_status ? loc.name : null;
+
+    // Get language name
+    const [lang_status, lang] = await platformModel.getItem("languages", event.language_id);
+    response.language = lang_status ? lang.name : null;
+
+    return res.status(200).json({ data: response });
+  } catch (err) {
+    console.log("Error while fetching full event details:", err.message);
+    return res.status(500).json({ data: "Server error" });
+  }
+};
+
+
+
+
+
+
+
 module.exports = {
   create,
-  getAllEvents
+  getAllEvents,
+  updateEvent,
+  getEventDetails
 }

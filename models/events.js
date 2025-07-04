@@ -95,8 +95,79 @@ async function getItem(eventId) {
   }
 }
 
+
+
+async function updateEvent(event_id, updateData) {
+  try {
+    await client.query('BEGIN');
+
+    const fields = Object.keys(updateData).filter(k => k !== 'genres');
+    const values = fields.map(k => updateData[k]);
+
+    const setClause = fields.map((key, idx) => `${key} = $${idx + 1}`).join(', ');
+
+    let eventUpdateResult;
+    if (fields.length > 0) {
+      const query = `
+        UPDATE events
+        SET ${setClause}
+        WHERE id = $${fields.length + 1}
+        RETURNING *;
+      `;
+      values.push(event_id);
+      eventUpdateResult = await client.query(query, values);
+    }
+
+    // Handle genres
+    if ('genres' in updateData && Array.isArray(updateData.genres)) {
+      // Delete old mappings
+      await client.query(`DELETE FROM event_genres WHERE event_id = $1`, [event_id]);
+
+      // Fetch event's internal ID
+      // const eventIdResult = await client.query(`SELECT id FROM events WHERE event_id = $1`, [event_id]);
+      // if (eventIdResult.rows.length === 0) {
+      //   await client.query('ROLLBACK');
+      //   return [false, "Event not found"];
+      // }
+      // const eventDbId = eventIdResult.rows[0].id;
+
+      // Insert new mappings
+      for (const genreId of updateData.genres) {
+        await client.query(`INSERT INTO event_genres (event_id, genre_id) VALUES ($1, $2)`, [event_id, genreId]);
+      }
+    }
+
+    await client.query('COMMIT');
+
+    if (eventUpdateResult?.rows?.length > 0) {
+      return [true, eventUpdateResult.rows[0]];
+    } else {
+      return [true, {}]; // No DB update, but genres were updated
+    }
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.log("Error while updating event:", err.message);
+    return [false, err.message];
+  }
+}
+
+async function getGenreMappings(event_id) {
+  try {
+    const query = `SELECT genre_id FROM event_genres WHERE event_id = $1`;
+    const result = await client.query(query, [event_id]);
+    return result.rows; // [{ genre_id: 1 }, ...]
+  } catch (err) {
+    console.log("Error fetching genre mappings:", err.message);
+    return [];
+  }
+}
+
+
 module.exports = {
   createEvent,
   getEvents,
-  getItem
+  getItem,
+  updateEvent,
+  getGenreMappings
 }

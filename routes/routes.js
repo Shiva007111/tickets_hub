@@ -14,6 +14,8 @@ router.put('/organiser/:id/update', orgController.UpdateItem);
 //event Routes
  router.post('/events/:orgId/create', eventController.create);
  router.get('/events/:orgId/getall', eventController.getAllEvents);
+ router.put('/events/:eventId/update', eventController.updateEvent);
+ router.get('/events/:event_id/details', eventController.getEventDetails)
 
 // Pricing Routes
  router.post('/orgniser/:orgId/events/:eventId/createpricing',pricingController.createTier);

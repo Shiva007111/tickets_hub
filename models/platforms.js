@@ -49,9 +49,26 @@ async function getItem(table, id) {
 
 }
 
+async function getNamesByIds(table, ids) {
+  try {
+    if (!Array.isArray(ids) || ids.length === 0) return [];
+
+    const placeholders = ids.map((_, idx) => `$${idx + 1}`).join(', ');
+    const query = `SELECT id, name FROM ${table} WHERE id IN (${placeholders})`;
+    const result = await client.query(query, ids);
+
+    return result.rows; // Array of {id, name}
+  } catch (err) {
+    console.log(`Error in getNamesByIds(${table}):`, err.message);
+    return [];
+  }
+}
+
+
 module.exports = {
   createIfNotExists,
   getAll,
   deleteById,
-  getItem
+  getItem,
+  getNamesByIds
 };
