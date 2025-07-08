@@ -174,7 +174,27 @@ const getEventDetails = async (req, res) => {
   }
 };
 
-
+const eventPublish = async (req, res) => {
+  try {
+    const event_uid = req.params.event_id;
+    const [status, event] = await events.getItem(event_uid)
+    if (!status) {
+      return res.status(422).json({"msg": "Event Not Found"})
+    }
+    const event_id = event.id
+    const event_status =  req.query.status;
+    const [publish_status, publish_data] = await events.pushEvent(event_status, event_id)
+    
+    if (!publish_status) {
+      return res.status(422).json({msg: publish_data})
+    }
+    return res.status(200).json({msg: publish_data})
+  }
+  catch(err) {
+    console.log("Error While publishing an event")
+    return res.status(500).json({data: err.message})
+  }
+}
 
 
 
@@ -184,5 +204,6 @@ module.exports = {
   create,
   getAllEvents,
   updateEvent,
-  getEventDetails
+  getEventDetails,
+  eventPublish
 }

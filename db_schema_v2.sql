@@ -1,5 +1,5 @@
 -- ENUM types first
-CREATE TYPE event_status AS ENUM ('draft', 'scheduled', 'completed', 'live', 'cancelled');
+CREATE TYPE event_status AS ENUM ('draft', 'published', 'completed', 'live', 'cancelled');
 CREATE TYPE event_venue_type AS ENUM ('online', 'offline', 'hybrid');
 
 -- Base tables

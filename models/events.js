@@ -163,11 +163,24 @@ async function getGenreMappings(event_id) {
   }
 }
 
+async function pushEvent(status, id) {
+  try {
+    const query = `UPDATE events SET status = $1 WHERE id = $2 RETURNING *`;
+    const result = await client.query(query, [status, id])
+    return [true, result.rows[0]]
+  }
+  catch (err) {
+    console.log("Error while pushing the event", err.message)
+    return [false, err.message]
+  }
+}
+
 
 module.exports = {
   createEvent,
   getEvents,
   getItem,
   updateEvent,
-  getGenreMappings
+  getGenreMappings,
+  pushEvent
 }
