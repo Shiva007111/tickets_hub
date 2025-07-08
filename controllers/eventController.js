@@ -1,6 +1,7 @@
 const organiser = require('../models/organisers')
 const platformModel = require('../models/platforms')
 const events = require('../models/events') 
+const ticketPricing =  require('../models/pricing') 
 const common_code = require('../helpers/common_code')
 
 
@@ -197,6 +198,43 @@ const eventPublish = async (req, res) => {
 }
 
 
+const getEventDetailsv2 = async (req, res) => {
+  try {
+    const event_uid = req.params.event_id;
+
+    // 1. Get event details by event_uid (UUID)
+    const [status, event] = await events.getItem(event_uid);
+    if (!status) {
+      return res.status(404).json({ data: "Event not found" });
+    }
+
+    const response = { ...event };
+
+    // 2. Add genres
+    const genreMapResult = await events.getGenreMappings(event.id);
+    const genreIds = genreMapResult.map(g => g.genre_id);
+    const genres = await platformModel.getNamesByIds("genres", genreIds);
+    response.genres = genres.map(g => g.name);
+
+    // 3. Add location
+    const [loc_status, loc] = await platformModel.getItem("locations", event.location_id);
+    response.location = loc_status ? loc.name : null;
+
+    // 4. Add language
+    const [lang_status, lang] = await platformModel.getItem("languages", event.language_id);
+    response.language = lang_status ? lang.name : null;
+
+    // 5. Add ticket pricing tiers
+    const [tiers_status, tiers] = await ticketPricing.getAllByEvent(event.id);
+    response.ticket_pricing = tiers_status ? tiers : [];
+
+    return res.status(200).json({ data: response });
+  } catch (err) {
+    console.log("Error while fetching full event details:", err.message);
+    return res.status(500).json({ data: "Server error" });
+  }
+};
+
 
 
 
@@ -205,5 +243,6 @@ module.exports = {
   getAllEvents,
   updateEvent,
   getEventDetails,
-  eventPublish
+  eventPublish,
+  getEventDetailsv2 
 }
