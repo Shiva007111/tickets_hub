@@ -150,8 +150,8 @@ const getEventDetails = async (req, res) => {
     // Get genres for this event
     const genreMapResult = await events.getGenreMappings(event.id);
     const genreIds = genreMapResult.map(g => g.genre_id);
-    const genres = await platformModel.getNamesByIds("genres", genreIds);
-    response.genres = genres.map(g => g.name);
+    //const genres = await platformModel.getNamesByIds("genres", genreIds);
+    response.genres = genreIds//.map(g => g.name);
 
     // Get location name
     const [loc_status, loc] = await platformModel.getItem("locations", event.location_id);

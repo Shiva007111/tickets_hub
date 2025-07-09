@@ -139,7 +139,7 @@ async function getItem(eventId) {
   }
   catch(err) {
     console.log("error while event get item", err.message)
-    return[false, error.message]
+    return[false, err.message]
   }
 }
 
