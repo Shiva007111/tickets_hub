@@ -33,37 +33,30 @@ const create = async (req, res) => {
     // language_id, 
     // thumbnails,
     // genres} = req.body;
+    var eventPayload = {}
+    for (const key of allowedKeys) {
+      if (req.body[key] !== undefined) {
+        eventPayload[key]= req.body[key]
+      }
+    }
+    /*
     const eventPayload = Object.fromEntries(
       allowedKeys.map(key => [key, req.body[key]])
-    );
+    );*/
     eventPayload.organiser_id = organiser_id;
 
     console.log("Event Payload ---> ", eventPayload)
 
     const [loc_status, loc_item] = await platformModel.getItem("locations" ,eventPayload.location_id)
     if (!loc_status) {
-      return res.status(422).json({data: item})
+      return res.status(422).json({data: loc_item})
     }
 
     const [lan_status, lan_item] = await platformModel.getItem("languages", eventPayload.language_id)
     if (!lan_status) {
-      return res.status(422).json({data: item})
+      return res.status(422).json({data: lan_item})
     }
 
-    // const [evt_status, evt_item] = await events.createEvent({title, 
-    //   organiser_id,
-    //   description, 
-    //   start_time, 
-    //   end_time,
-    //   duration,
-    //   event_status,
-    //   is_free,
-    //   venue_type,
-    //   location_id,
-    //   language_id,
-    //   thumbnails,
-    //   genres
-    // })
     const [evt_status, evt_item] = await events.createEvent(eventPayload);
     if (evt_status) {
       return res.status(200).json({data: evt_item}) 
@@ -212,8 +205,11 @@ const getEventDetailsv2 = async (req, res) => {
 
     // 2. Add genres
     const genreMapResult = await events.getGenreMappings(event.id);
+    console.log("genres mapping ---> ",genreMapResult)
     const genreIds = genreMapResult.map(g => g.genre_id);
+    console.log("genres Ids ---> ",genreIds)
     const genres = await platformModel.getNamesByIds("genres", genreIds);
+    console.log("genres  ---> ",genres)
     response.genres = genres.map(g => g.name);
 
     // 3. Add location
