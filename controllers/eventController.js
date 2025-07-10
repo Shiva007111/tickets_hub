@@ -107,7 +107,7 @@ const updateEvent = async (req, res) => {
 
     const allowedKeys = [
       "title", "description", "start_time", "end_time", "duration",
-      "event_status", "is_free", "venue_type", "location_id",
+      "status", "is_free", "venue_type", "location_id",
       "language_id", "thumbnails", "genres"
     ];
 
@@ -117,7 +117,6 @@ const updateEvent = async (req, res) => {
         updateData[key] = req.body[key];
       }
     }
-
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ data: "No valid fields to update" });
     }
