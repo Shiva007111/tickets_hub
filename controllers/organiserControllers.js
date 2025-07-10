@@ -15,14 +15,14 @@ const create = async (req, res) => {
         mobile_number,verification_status,organiser_id
       })
     if (status){
-      return res.status(200).json({"msg": msg})
+      return res.status(200).json({error: msg})
     }
     else {
-      return res.status(422).json({"msg": msg})
+      return res.status(422).json({error: msg})
     }
   }
   catch (error){
-    return res.status(400).json({"msg": error.message})
+    return res.status(400).json({error: error.message})
   }
 }
 
@@ -35,15 +35,15 @@ const getAllOrgs = async (req, res) => {
     console.log("offset", {offset, page_size})
     const {status,data} = await organiser.getAll({offset, page_size})
     if (status) {
-      return res.status(200).json({"data": data})
+      return res.status(200).json({data: data})
     }
     else {
-      return res.status(422).json({"data": data})
+      return res.status(422).json({error: data})
     }
   }
   catch (err) {
     console.log("crashing in getallOrgs --> ", err.message)
-    return res.status(422).json({"msg": err.message})
+    return res.status(422).json({error: err.message})
   }
 }
 
@@ -56,12 +56,12 @@ const ItemDetails = async (req, res) => {
       return res.status(200).json({ data: data });
     }
     else {
-      return res.status(422).json({ data: data });
+      return res.status(422).json({ error: data });
     }
   }
   catch (err) {
     console.log("crashing in getItem--->", err.message);
-    return res.status(422).json({ msg: err.message });
+    return res.status(422).json({ error: err.message });
   }
 };
 
@@ -71,7 +71,7 @@ const UpdateItem = async (req, res) => {
     const { status, data } = await organiser.getItem(id);
     console.log("here--->",status)
     if (!status) {
-      return res.status(422).json({ data: data });
+      return res.status(422).json({ error: data });
     }
     const {name, mobile_number,verification_status} = req.body;
     const {new_status, new_data} = await organiser.update({name, mobile_number, verification_status, id});
@@ -79,12 +79,12 @@ const UpdateItem = async (req, res) => {
       res.status(200).json({data: new_data});
     }
     else {
-      res.status(422).json({data: new_data})
+      res.status(422).json({error: new_data})
     }
   }
   catch (err) {
     console.log("crashing in update item --->", err.message);
-    return res.status(422).json({ msg: err.message });
+    return res.status(422).json({ error: err.message });
   }
 }
 

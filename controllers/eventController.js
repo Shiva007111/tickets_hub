@@ -17,7 +17,7 @@ const create = async (req, res) => {
     console.log("organiser_data --->", data)
     const organiser_id = data["id"]
     if (!status) {
-      return res.status(422).json({data: data})
+      return res.status(422).json({error:  data})
     }
     const allowedKeys = ["title", "description", "start_time", "end_time", "duration","event_status", "is_free", "venue_type", "location_id", "language_id", "thumbnails", "genres"
     ];
@@ -49,20 +49,20 @@ const create = async (req, res) => {
 
     const [loc_status, loc_item] = await platformModel.getItem("locations" ,eventPayload.location_id)
     if (!loc_status) {
-      return res.status(422).json({data: loc_item})
+      return res.status(422).json({error:  loc_item})
     }
 
     const [lan_status, lan_item] = await platformModel.getItem("languages", eventPayload.language_id)
     if (!lan_status) {
-      return res.status(422).json({data: lan_item})
+      return res.status(422).json({error:  lan_item})
     }
 
     const [evt_status, evt_item] = await events.createEvent(eventPayload);
     if (evt_status) {
-      return res.status(200).json({data: evt_item}) 
+      return res.status(200).json({data:  evt_item}) 
     }
     else {
-      return res.status(422).json({data: evt_item})
+      return res.status(422).json({error:  evt_item})
     }
   }
   catch (err) {
@@ -81,15 +81,15 @@ const getAllEvents = async (req, res) => {
     const offset = await common_code.pagination(page_no, page_size)
     const [evt_status, evt_data]= await events.getEvents(org_id, offset, page_size)
     if (evt_status) {
-      return res.status(200).json({data: evt_data})
+      return res.status(200).json({data:  evt_data})
     }
     else {
-      return res.status(422).json({data:evt_data})
+      return res.status(422).json({error: evt_data})
     }
   }
   catch(err) {
     console.log("err ->", err.message )
-    return res.status(422).json({data:err.message})
+    return res.status(422).json({error: err.message})
   }
 
 }
@@ -100,7 +100,7 @@ const updateEvent = async (req, res) => {
 
      const [evt_status, event_data] = await events.getItem(event_uid);
     if (!evt_status) {
-      return res.status(404).json({ data: "Event not found" });
+      return res.status(404).json({ error:  "Event not found" });
     }
 
     const eventDb_id = event_data.id;
@@ -118,19 +118,19 @@ const updateEvent = async (req, res) => {
       }
     }
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ data: "No valid fields to update" });
+      return res.status(400).json({ error:  "No valid fields to update" });
     }
 
     const [status, updatedEvent] = await events.updateEvent(eventDb_id, updateData);
 
     if (status) {
-      return res.status(200).json({ data: updatedEvent });
+      return res.status(200).json({ data:  updatedEvent });
     } else {
-      return res.status(404).json({ data: "Event not found or failed to update" });
+      return res.status(404).json({ error:  "Event not found or failed to update" });
     }
   } catch (err) {
     console.log("Error while updating event:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error:  "Server error" });
   }
 };
 
@@ -141,7 +141,7 @@ const getEventDetails = async (req, res) => {
 
     const [status, event] = await events.getItem(event_uid);
     if (!status) {
-      return res.status(404).json({ data: "Event not found" });
+      return res.status(404).json({ error:  "Event not found" });
     }
 
     const response = { ...event };
@@ -160,10 +160,10 @@ const getEventDetails = async (req, res) => {
     const [lang_status, lang] = await platformModel.getItem("languages", event.language_id);
     response.language = lang_status ? lang.name : null;
 
-    return res.status(200).json({ data: response });
+    return res.status(200).json({ data:  response });
   } catch (err) {
     console.log("Error while fetching full event details:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error:  "Server error" });
   }
 };
 
@@ -179,13 +179,13 @@ const eventPublish = async (req, res) => {
     const [publish_status, publish_data] = await events.pushEvent(event_status, event_id)
     
     if (!publish_status) {
-      return res.status(422).json({msg: publish_data})
+      return res.status(422).json({error: publish_data})
     }
-    return res.status(200).json({msg: publish_data})
+    return res.status(200).json({data: publish_data})
   }
   catch(err) {
     console.log("Error While publishing an event")
-    return res.status(500).json({data: err.message})
+    return res.status(500).json({error:  err.message})
   }
 }
 
@@ -197,7 +197,7 @@ const getEventDetailsv2 = async (req, res) => {
     // 1. Get event details by event_uid (UUID)
     const [status, event] = await events.getItem(event_uid);
     if (!status) {
-      return res.status(404).json({ data: "Event not found" });
+      return res.status(404).json({ error:  "Event not found" });
     }
 
     const response = { ...event };
@@ -223,10 +223,10 @@ const getEventDetailsv2 = async (req, res) => {
     const [tiers_status, tiers] = await ticketPricing.getAllByEvent(event.id);
     response.ticket_pricing = tiers_status ? tiers : [];
 
-    return res.status(200).json({ data: response });
+    return res.status(200).json({ data:  response });
   } catch (err) {
     console.log("Error while fetching full event details:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error:  "Server error" });
   }
 };
 

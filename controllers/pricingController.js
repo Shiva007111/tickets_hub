@@ -11,11 +11,11 @@ const createTier = async (req, res) => {
     console.log("org_id, event_id", org_id, eventId)
     const {status, data} = await organiser.getItem(org_id);
     if (!status) {
-      return res.status(422).json({data: "Organiser not found"})
+      return res.status(422).json({error: "Organiser not found"})
     }
     const [event_status, event_data] = await events.getItem(eventId)
     if (!event_status) {
-      return res.status(422).json({data: "Event not found"})
+      return res.status(422).json({error: "Event not found"})
     }
 
     const tiers_data = req.body["data"]
@@ -33,7 +33,7 @@ const createTier = async (req, res) => {
       if (tic_status) {
         createdTiers.push(tic_item);
       } else {
-        return res.status(422).json({ data: `Failed to create tier: ${tier_obj.label || tier_obj.tier}` });
+        return res.status(422).json({ error: `Failed to create tier: ${tier_obj.label || tier_obj.tier}` });
       }
     }
 
@@ -67,7 +67,7 @@ const updateTier = async (req, res) => {
     }
 
     if (Object.keys(updateData).length === 0) {
-      return res.status(400).json({ data: "No valid fields to update" });
+      return res.status(400).json({ error: "No valid fields to update" });
     }
 
     const [update_status, updated_row] = await ticketPricing.updateTierById(tier_id, updateData);
@@ -75,11 +75,11 @@ const updateTier = async (req, res) => {
     if (update_status) {
       return res.status(200).json({ data: updated_row });
     } else {
-      return res.status(422).json({ data: "Failed to update tier" });
+      return res.status(422).json({ error: "Failed to update tier" });
     }
   } catch (err) {
     console.log("Error while updating ticket tier:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -93,11 +93,11 @@ const getTierById = async (req, res) => {
     if (status) {
       return res.status(200).json({ data: tier_data });
     } else {
-      return res.status(404).json({ data: "Ticket tier not found" });
+      return res.status(404).json({ error: "Ticket tier not found" });
     }
   } catch (err) {
     console.log("Error while fetching ticket tier:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -111,11 +111,11 @@ const deleteTier = async (req, res) => {
     if (status) {
       return res.status(200).json({ data: "Tier deleted successfully" });
     } else {
-      return res.status(404).json({ data: "Tier not found or already deleted" });
+      return res.status(404).json({ error: "Tier not found or already deleted" });
     }
   } catch (err) {
     console.log("Error while deleting ticket tier:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -131,11 +131,11 @@ const getAllTiersByEvent = async (req, res) => {
     if (status) {
       return res.status(200).json({ data: tiers });
     } else {
-      return res.status(404).json({ data: "No ticket tiers found for this event" });
+      return res.status(404).json({ error: "No ticket tiers found for this event" });
     }
   } catch (err) {
     console.log("Error while fetching ticket tiers for event:", err.message);
-    return res.status(500).json({ data: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
