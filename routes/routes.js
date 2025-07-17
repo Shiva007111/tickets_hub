@@ -1,8 +1,9 @@
 const express = require('express')
 const orgController = require('../controllers/organiserControllers');
 const platfromController = require('../controllers/platfromController');
-const eventController = require('../controllers/eventController')
-const pricingController = require('../controllers/pricingController')
+const eventController = require('../controllers/eventController');
+const pricingController = require('../controllers/pricingController');
+const transactionController = require('../controllers/trasactions_controller');
 const router = express.Router();
 
 //organisers routes 
@@ -25,6 +26,13 @@ router.get('/events/:event_id/get_fulldetails', eventController.getEventDetailsv
  router.get('/ticketplan/:tier_id/details', pricingController.getTierById);
  router.delete('/ticketplan/:tier_id/delete', pricingController.deleteTier);
  router.get('/events/:event_id/get_tiers', pricingController.getAllTiersByEvent)
+
+
+//Ticket APIs
+  router.post('/tickets/:tier_id/create', transactionController.create);
+
+  router.post('/tickets/payu/callback', transactionController.paymentCallback)
+
 
 
 

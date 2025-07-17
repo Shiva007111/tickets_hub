@@ -45,11 +45,13 @@ async function updateTierById(tier_id, updateData) {
 }
 
 async function getItem(tier_id) {
+  console.log('------------------->', tier_id)
   try {
     const query = `SELECT * FROM ticket_pricing WHERE tier_id = $1`;
     const result = await client.query(query, [tier_id]);
 
     if (result.rows.length > 0) {
+      console.log('------>1')
       return [true, result.rows[0]];
     } else {
       return [false, "Data Not Found"];
@@ -100,6 +102,18 @@ async function getAllByEvent(event_id) {
 
 
 
+async function updateCounts(tier_id) {
+  const query = `
+    UPDATE ticket_pricing
+    SET
+      available_quantity = available_quantity - 1,
+      booked_quantity = booked_quantity + 1
+    WHERE id = $1
+  `;
+  await client.query(query, [tier_id]);
+}
+
+
 
 
 module.exports = {
@@ -107,5 +121,6 @@ module.exports = {
   updateTierById,
   getItem,
   deleteItem,
-  getAllByEvent
+  getAllByEvent,
+  updateCounts
 }

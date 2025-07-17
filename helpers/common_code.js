@@ -36,8 +36,22 @@ async function pagination(page_no, page_size){
 }
 
 
+async function getuniq_txnid() {
+  const timestamp =  Date.now()
+  const random = Math.floor(Math.random() * 1000)
+  console.log('timestamp', timestamp, random)
+  const id = `${timestamp}${random}`;
+  console.log("uniq_code ------------->", id)
+  return id
+}
+
+async function getOrderId() {
+  return  `ORD_${crypto.randomUUID().split('-')[4]}_${Date.now()}`
+}
 
 module.exports = {
   getUniqid,
-  pagination
+  pagination,
+  getuniq_txnid,
+  getOrderId
 }

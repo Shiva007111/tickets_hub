@@ -75,3 +75,54 @@ CREATE TABLE ticket_pricing (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   UNIQUE(event_id, label)
 );
+
+CREATE TABLE transactions (
+  id SERIAL PRIMARY KEY,
+  txn_id VARCHAR(255) UNIQUE NOT NULL,
+  tier_id INTEGER REFERENCES ticket_pricing(id) ON DELETE CASCADE,
+  event_id INTEGER REFERENCES events(id) ON  DELETE CASCADE,
+  order_id VARCHAR(255) NOT NULL,
+  txn_status VARCHAR(10) NOT NULL,
+  user_id VARCHAR(255),
+  email_id VARCHAR(255),
+  mobile_number VARCHAR(255),
+  miscellaneous JSONB,
+  price DECIMAL(10, 2) NOT NULL,
+  original_price DECIMAL(10, 2),
+  currency VARCHAR(10) DEFAULT 'INR',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tickets(
+  id SERIAL PRIMARY KEY,
+  ticket_id VARCHAR(255) UNIQUE NOT NULL,
+  tier_id INTEGER REFERENCES ticket_pricing(id),
+  event_id INTEGER REFERENCES events(id),
+  txn_id INTEGER REFERENCES transactions(id),
+  ticket_no INTEGER,
+  user_id VARCHAR(255),
+  email_id VARCHAR(255),
+  mobile_number VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
